@@ -60,17 +60,34 @@ const SearchAndFilters = ({
           <Input
             placeholder="Buscar produtos por nome..."
             value={searchTerm}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-10 h-12 border-2"
+            onChange={(e) => {
+              console.log('🔍 SearchAndFilters input changed:', e.target.value);
+              onSearchChange(e.target.value);
+            }}
+            onInput={(e) => {
+              console.log('🔍 SearchAndFilters input event:', e.currentTarget.value);
+              onSearchChange(e.currentTarget.value);
+            }}
+            className="pl-10 h-12 border-2 touch-manipulation"
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck="false"
           />
         </div>
 
         {/* Category Filter */}
-        <Select value={selectedCategory} onValueChange={onCategoryChange}>
-          <SelectTrigger className="h-12 border-2">
+        <Select 
+          value={selectedCategory} 
+          onValueChange={(value) => {
+            console.log('🏷️ SearchAndFilters category changed:', value);
+            onCategoryChange(value);
+          }}
+        >
+          <SelectTrigger className="h-12 border-2 touch-manipulation">
             <SelectValue placeholder="Filtrar por categoria" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="max-h-60 overflow-y-auto z-50">
             <SelectItem value="all">Todas as categorias</SelectItem>
             {categories.map((category) => (
               <SelectItem key={category.id} value={category.slug}>

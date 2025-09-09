@@ -85,7 +85,7 @@ const CategoriesSection = ({ onCategorySelect }: CategoriesSectionProps) => {
     }
   };
 
-  const handleCategoryClick = (categorySlug: string, e?: React.MouseEvent) => {
+  const handleCategoryClick = (categorySlug: string, e?: React.MouseEvent | React.TouchEvent) => {
     try {
       console.log('🏷️ Category clicked:', categorySlug);
       e?.preventDefault();
@@ -94,38 +94,43 @@ const CategoriesSection = ({ onCategorySelect }: CategoriesSectionProps) => {
       if (onCategorySelect) {
         console.log('📝 Calling onCategorySelect with:', categorySlug);
         onCategorySelect(categorySlug);
-      }
-      
-      // Scroll to products section with a slight delay to ensure state update
-      setTimeout(() => {
-        try {
-          console.log('📍 Looking for main section...');
-          const productSection = document.querySelector('main');
-          console.log('📍 Found main section:', !!productSection);
-          
-          if (productSection) {
-            // Check if smooth scrolling is supported
-            if ('scrollBehavior' in document.documentElement.style) {
-              productSection.scrollIntoView({ behavior: 'smooth' });
-            } else {
-              // Fallback for older mobile browsers
-              window.scrollTo(0, productSection.offsetTop);
-            }
-          } else {
-            console.warn('⚠️ Main section not found, trying alternative scroll');
-            // Fallback: scroll to a reasonable position
-            window.scrollTo(0, window.innerHeight);
-          }
-        } catch (scrollError) {
-          console.warn('⚠️ Scroll error (non-critical):', scrollError);
-          // Fallback scroll without smooth behavior for mobile compatibility
+        
+        // Force immediate scroll for mobile
+        requestAnimationFrame(() => {
           try {
-            window.scrollTo(0, window.innerHeight);
-          } catch (fallbackError) {
-            console.warn('⚠️ Even fallback scroll failed:', fallbackError);
+            console.log('📍 Looking for main section...');
+            const productSection = document.querySelector('main');
+            console.log('📍 Found main section:', !!productSection);
+            
+            if (productSection) {
+              const rect = productSection.getBoundingClientRect();
+              const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+              const targetPosition = rect.top + scrollTop - 80; // Account for header
+              
+              // Use simpler scroll for mobile compatibility
+              window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+              });
+            } else {
+              console.warn('⚠️ Main section not found, trying alternative scroll');
+              // Fallback: scroll to a reasonable position
+              window.scrollTo({
+                top: window.innerHeight * 0.8,
+                behavior: 'smooth'
+              });
+            }
+          } catch (scrollError) {
+            console.warn('⚠️ Scroll error (non-critical):', scrollError);
+            // Fallback scroll without smooth behavior for mobile compatibility
+            try {
+              window.scrollTo(0, window.innerHeight);
+            } catch (fallbackError) {
+              console.warn('⚠️ Even fallback scroll failed:', fallbackError);
+            }
           }
-        }
-      }, 150);
+        });
+      }
     } catch (error) {
       console.error('❌ Category click error:', error);
       // Ensure the category still gets selected even if scroll fails
@@ -182,8 +187,17 @@ const CategoriesSection = ({ onCategorySelect }: CategoriesSectionProps) => {
             return (
               <Card 
                 key={category.id} 
-                className="group cursor-pointer hover:shadow-card transition-all duration-300 hover:-translate-y-1 border-0 shadow-sm"
+                className="group cursor-pointer hover:shadow-card transition-all duration-300 hover:-translate-y-1 border-0 shadow-sm touch-manipulation"
                 onClick={(e) => handleCategoryClick(category.slug, e)}
+                onTouchEnd={(e) => handleCategoryClick(category.slug, e)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleCategoryClick(category.slug);
+                  }
+                }}
               >
                 <CardContent className="p-3 sm:p-6 text-center">
                   <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full ${colorClass} flex items-center justify-center mx-auto mb-2 sm:mb-4 group-hover:scale-110 transition-transform duration-300`}>

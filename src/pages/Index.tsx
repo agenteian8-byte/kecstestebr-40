@@ -17,6 +17,16 @@ const Index = () => {
   const [showAdmin, setShowAdmin] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  
+  const handleSearchChange = (term: string) => {
+    console.log('📝 Index - Search term changed:', term);
+    setSearchTerm(term);
+  };
+  
+  const handleCategoryChange = (category: string) => {
+    console.log('📝 Index - Category changed:', category);
+    setSelectedCategory(category);
+  };
 
   if (showAuth) {
     return <AuthPage onBack={() => setShowAuth(false)} />;
@@ -30,12 +40,18 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header
-        onAuthClick={() => setShowAuth(true)}
-        onAdminClick={() => setShowAdmin(true)}
+        onAuthClick={() => {
+          console.log('🔑 Index - Auth clicked');
+          setShowAuth(true);
+        }}
+        onAdminClick={() => {
+          console.log('👑 Index - Admin clicked');
+          setShowAdmin(true);
+        }}
         searchTerm={searchTerm}
         selectedCategory={selectedCategory}
-        onSearchChange={setSearchTerm}
-        onCategoryChange={setSelectedCategory}
+        onSearchChange={handleSearchChange}
+        onCategoryChange={handleCategoryChange}
       />
       
       <BannerCarousel />
@@ -52,7 +68,7 @@ const Index = () => {
         </main>
       )}
 
-      <CategoriesSection onCategorySelect={setSelectedCategory} />
+      <CategoriesSection onCategorySelect={handleCategoryChange} />
       <Footer />
       <ChatBot />
     </div>

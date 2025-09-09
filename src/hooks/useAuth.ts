@@ -24,29 +24,41 @@ export const useAuth = () => {
 
     const getSession = async () => {
       try {
+        console.log('🔑 Getting session...');
         const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('🔑 Session error:', error);
+        }
         
         if (mounted) {
           setSession(session);
           setUser(session?.user ?? null);
+          console.log('🔑 Session set:', !!session);
           
           if (session?.user) {
+            console.log('👤 Getting profile for user:', session.user.id);
             // Get profile
-            const { data: profileData } = await supabase
+            const { data: profileData, error: profileError } = await supabase
               .from('profiles')
               .select('*')
               .eq('user_id', session.user.id)
               .maybeSingle();
             
+            if (profileError) {
+              console.error('👤 Profile error:', profileError);
+            }
+            
             if (mounted) {
               setProfile(profileData as Profile);
+              console.log('👤 Profile set:', !!profileData);
             }
           }
           
           setLoading(false);
         }
       } catch (error) {
-        console.error('Auth error:', error);
+        console.error('🔑 Auth error:', error);
         if (mounted) {
           setLoading(false);
         }

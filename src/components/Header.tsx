@@ -87,18 +87,35 @@ const Header = ({
                 <Input
                   placeholder="Buscar produtos..."
                   value={searchTerm}
-                  onChange={(e) => onSearchChange(e.target.value)}
-                  className="pl-10 h-10 sm:placeholder:opacity-100 placeholder:opacity-0"
+                  onChange={(e) => {
+                    console.log('🔍 Search input changed:', e.target.value);
+                    onSearchChange(e.target.value);
+                  }}
+                  onInput={(e) => {
+                    console.log('🔍 Search input event:', e.currentTarget.value);
+                    onSearchChange(e.currentTarget.value);
+                  }}
+                  className="pl-10 h-10 sm:placeholder:opacity-100 placeholder:opacity-0 touch-manipulation"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  autoCapitalize="off"
+                  spellCheck="false"
                 />
               </div>
 
               {/* Category Filter - Hidden on mobile, shown on tablet+ */}
               <div className="hidden sm:block min-w-[140px]">
-                <Select value={selectedCategory} onValueChange={onCategoryChange}>
-                  <SelectTrigger className="h-10">
+                <Select 
+                  value={selectedCategory} 
+                  onValueChange={(value) => {
+                    console.log('🏷️ Category selected in header:', value);
+                    onCategoryChange(value);
+                  }}
+                >
+                  <SelectTrigger className="h-10 touch-manipulation">
                     <SelectValue placeholder="Categorias" />
                   </SelectTrigger>
-                  <SelectContent className="bg-background border shadow-md z-50">
+                  <SelectContent className="bg-background border shadow-md z-50 max-h-60 overflow-y-auto">
                     <SelectItem value="all">Todas</SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category.id} value={category.slug}>
@@ -136,8 +153,13 @@ const Header = ({
             ) : (
               <Button 
                 variant="outline" 
-                onClick={onAuthClick}
-                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('🔑 Auth button clicked');
+                  onAuthClick();
+                }}
+                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground touch-manipulation"
                 size="sm"
               >
                 <User className="h-4 w-4 sm:mr-2" />
