@@ -58,15 +58,12 @@ const Index = () => {
       
       <FeaturedProducts />
       
-      {/* Only show ProductList when there's a search term or category selected */}
-      {(searchTerm.trim() !== '' || selectedCategory !== 'all') && (
-        <main className="container mx-auto px-4 py-8">        
-          <ProductList
-            searchTerm={searchTerm}
-            selectedCategory={selectedCategory}
-          />
-        </main>
-      )}
+      <main className="container mx-auto px-4 py-8">        
+        <ProductList
+          searchTerm={searchTerm}
+          selectedCategory={selectedCategory}
+        />
+      </main>
 
       <CategoriesSection onCategorySelect={handleCategoryChange} />
       <Footer />

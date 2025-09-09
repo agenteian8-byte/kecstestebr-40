@@ -146,7 +146,7 @@ const ProductList = ({ searchTerm, selectedCategory }: ProductListProps) => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-foreground">
-          Produtos ({products.length})
+          {searchTerm || selectedCategory !== 'all' ? `Produtos (${products.length})` : `Todos os Produtos (${products.length})`}
         </h2>
         <Button
           onClick={handleWhatsAppContact}
