@@ -77,12 +77,6 @@ const Index = () => {
         <>
           <BannerCarousel />
           <FeaturedProducts />
-          <main className="container mx-auto px-4 py-8">        
-            <ProductList
-              searchTerm={searchTerm}
-              selectedCategory={selectedCategory}
-            />
-          </main>
           <CategoriesSection onCategorySelect={handleCategoryChange} />
         </>
       )}
