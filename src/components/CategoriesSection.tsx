@@ -85,62 +85,27 @@ const CategoriesSection = ({ onCategorySelect }: CategoriesSectionProps) => {
     }
   };
 
-  const handleCategoryClick = (categorySlug: string, e?: React.MouseEvent | React.TouchEvent) => {
-    try {
-      console.log('🏷️ Category clicked:', categorySlug);
-      e?.preventDefault();
-      e?.stopPropagation();
+  const handleCategoryClick = (categorySlug: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    console.log('🏷️ Category clicked:', categorySlug);
+    
+    if (onCategorySelect) {
+      onCategorySelect(categorySlug);
       
-      if (onCategorySelect) {
-        console.log('📝 Calling onCategorySelect with:', categorySlug);
-        onCategorySelect(categorySlug);
-        
-        // Force immediate scroll for mobile
-        requestAnimationFrame(() => {
-          try {
-            console.log('📍 Looking for main section...');
-            const productSection = document.querySelector('main');
-            console.log('📍 Found main section:', !!productSection);
-            
-            if (productSection) {
-              const rect = productSection.getBoundingClientRect();
-              const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-              const targetPosition = rect.top + scrollTop - 80; // Account for header
-              
-              // Use simpler scroll for mobile compatibility
-              window.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
-              });
-            } else {
-              console.warn('⚠️ Main section not found, trying alternative scroll');
-              // Fallback: scroll to a reasonable position
-              window.scrollTo({
-                top: window.innerHeight * 0.8,
-                behavior: 'smooth'
-              });
-            }
-          } catch (scrollError) {
-            console.warn('⚠️ Scroll error (non-critical):', scrollError);
-            // Fallback scroll without smooth behavior for mobile compatibility
-            try {
-              window.scrollTo(0, window.innerHeight);
-            } catch (fallbackError) {
-              console.warn('⚠️ Even fallback scroll failed:', fallbackError);
-            }
-          }
-        });
-      }
-    } catch (error) {
-      console.error('❌ Category click error:', error);
-      // Ensure the category still gets selected even if scroll fails
-      if (onCategorySelect) {
-        try {
-          onCategorySelect(categorySlug);
-        } catch (selectError) {
-          console.error('❌ Category select also failed:', selectError);
+      // Simple scroll to products section
+      setTimeout(() => {
+        const productSection = document.querySelector('main');
+        if (productSection) {
+          productSection.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+          });
         }
-      }
+      }, 100);
     }
   };
 
