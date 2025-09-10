@@ -157,7 +157,7 @@ const FeaturedProducts = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {currentProducts.map((product) => (
-            <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow group cursor-pointer">
+            <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow group cursor-pointer flex flex-col h-full">
               <div className="relative w-full h-48" onClick={() => handleProductClick(product)}>
                 <img 
                   src={product.image_url || 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop'} 
@@ -185,8 +185,8 @@ const FeaturedProducts = () => {
                 )}
               </div>
 
-              <CardContent className="p-4 flex flex-col justify-between h-40">
-                <div>
+              <CardContent className="p-4 flex flex-col flex-1 justify-between min-h-[200px]">
+                <div className="flex-1">
                   <h3 className="font-semibold text-base text-foreground mb-2 cursor-pointer hover:text-primary transition-colors line-clamp-2" 
                       onClick={() => handleProductClick(product)}>
                     {product.name}
@@ -199,7 +199,7 @@ const FeaturedProducts = () => {
                   )}
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-3 mt-auto">
                   <div>
                     <div className="text-xl font-bold text-primary">
                       R$ {getPrice(product).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
@@ -212,7 +212,7 @@ const FeaturedProducts = () => {
                   </div>
 
                   <Button 
-                    className="bg-gradient-primary hover:opacity-90 font-semibold w-full h-9 text-sm"
+                    className="bg-gradient-primary hover:opacity-90 font-semibold w-full h-10 text-sm"
                     onClick={() => handleWhatsAppContact(product)}
                   >
                     <MessageCircle className="h-4 w-4 mr-2" />
