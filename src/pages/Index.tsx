@@ -21,6 +21,11 @@ const Index = () => {
   const handleSearchChange = (term: string) => {
     console.log('📝 Index - Search term changed:', term);
     setSearchTerm(term);
+    // When user starts typing, reset category to search in all products
+    if (term.trim() !== '' && selectedCategory !== 'all') {
+      console.log('🔄 Index - Resetting category to "all" for search');
+      setSelectedCategory('all');
+    }
   };
   
   const handleCategoryChange = (category: string) => {
