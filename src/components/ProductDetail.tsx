@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MessageCircle, ShoppingCart, ZoomIn, ZoomOut, X } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useStoreCredentials } from '@/hooks/useStoreCredentials';
 
 interface Product {
   id: string;
@@ -29,6 +30,7 @@ const ProductDetail = ({ product, isOpen, onClose }: ProductDetailProps) => {
   const [imageZoom, setImageZoom] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
   const { profile } = useAuth();
+  const { redirectToWhatsApp, currentSector } = useStoreCredentials();
 
   if (!product) return null;
 
@@ -47,10 +49,8 @@ const ProductDetail = ({ product, isOpen, onClose }: ProductDetailProps) => {
   };
 
   const handleWhatsAppContact = () => {
-    const phoneNumber = '558534833373';
     const message = `Olá! Gostaria de saber mais sobre o produto: ${product.name} (SKU: ${product.sku || 'N/A'})`;
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+    redirectToWhatsApp(message);
   };
 
   const handleZoomIn = () => {

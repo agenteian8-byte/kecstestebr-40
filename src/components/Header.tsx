@@ -1,8 +1,9 @@
-import { Search, User, LogOut } from "lucide-react";
+import { Search, User, LogOut, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
+import { useStoreCredentials } from "@/hooks/useStoreCredentials";
 import { useState, useEffect } from "react";
 import { supabasePublic as supabase } from "@/integrations/supabase/publicClient";
 
@@ -30,6 +31,7 @@ const Header = ({
   onCategoryChange 
 }: HeaderProps) => {
   const { user, profile, signOut } = useAuth();
+  const { redirectToWhatsApp, currentSector } = useStoreCredentials();
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
@@ -130,6 +132,26 @@ const Header = ({
 
           {/* User Info and Actions */}
           <div className="flex items-center gap-2">
+            {/* WhatsApp Button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => redirectToWhatsApp()}
+              className="bg-green-500 hover:bg-green-600 text-white border-green-500 hidden sm:inline-flex"
+            >
+              <MessageCircle className="h-4 w-4 mr-2" />
+              WhatsApp {currentSector === 'revenda' ? 'Revenda' : 'Varejo'}
+            </Button>
+            
+            {/* Mobile WhatsApp Button */}
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => redirectToWhatsApp()}
+              className="bg-green-500 hover:bg-green-600 text-white border-green-500 sm:hidden"
+            >
+              <MessageCircle className="h-4 w-4" />
+            </Button>
             {user && profile ? (
               <div className="flex items-center gap-2">
                 <div className="text-sm hidden sm:block">
