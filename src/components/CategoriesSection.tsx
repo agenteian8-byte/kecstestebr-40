@@ -140,6 +140,7 @@ const CategoriesSection = ({ onCategorySelect }: CategoriesSectionProps) => {
               <Card 
                 key={category.id} 
                 className="group cursor-pointer hover:shadow-card transition-all duration-300 hover:-translate-y-1 border-0 shadow-sm"
+                translate="no"
               >
                 <CardContent 
                   className="p-3 sm:p-6 text-center"
@@ -151,6 +152,7 @@ const CategoriesSection = ({ onCategorySelect }: CategoriesSectionProps) => {
                   }}
                   role="button"
                   tabIndex={0}
+                  translate="no"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
