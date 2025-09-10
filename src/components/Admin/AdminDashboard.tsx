@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { LogOut, Package, Image, Tags, Users, Star } from 'lucide-react';
+import { LogOut, Package, Image, Tags, Users, Star, Settings } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import ProductManagement from './ProductManagement';
 import BannerManagement from './BannerManagement';
 import CategoryManagement from './CategoryManagement';
 import ClientManagement from './ClientManagement';
 import FeaturedProductsManagement from './FeaturedProductsManagement';
+import StoreCredentialsManagement from './StoreCredentialsManagement';
 
 interface AdminDashboardProps {
   onBack: () => void;
@@ -47,7 +48,7 @@ const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
 
       <div className="container mx-auto p-6">
         <Tabs defaultValue="products" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="products" className="flex items-center gap-2">
               <Package className="h-4 w-4" />
               Produtos
@@ -67,6 +68,10 @@ const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
             <TabsTrigger value="clients" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               Clientes
+            </TabsTrigger>
+            <TabsTrigger value="credentials" className="flex items-center gap-2">
+              <Settings className="h-4 w-4" />
+              Credenciais
             </TabsTrigger>
           </TabsList>
 
@@ -88,6 +93,10 @@ const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
 
           <TabsContent value="clients">
             <ClientManagement />
+          </TabsContent>
+
+          <TabsContent value="credentials">
+            <StoreCredentialsManagement />
           </TabsContent>
         </Tabs>
       </div>
