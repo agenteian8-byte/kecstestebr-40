@@ -37,6 +37,9 @@ const Index = () => {
   }
 
   
+  // Check if user is searching or has selected a category
+  const isSearching = searchTerm.trim() !== '' || selectedCategory !== 'all';
+  
   return (
     <div className="min-h-screen bg-background">
       <Header
@@ -54,18 +57,31 @@ const Index = () => {
         onCategoryChange={handleCategoryChange}
       />
       
-      <BannerCarousel />
+      {isSearching ? (
+        // Search results page - clean white background with only products
+        <div className="bg-white min-h-screen">
+          <main className="container mx-auto px-4 py-8">        
+            <ProductList
+              searchTerm={searchTerm}
+              selectedCategory={selectedCategory}
+            />
+          </main>
+        </div>
+      ) : (
+        // Home page with all sections
+        <>
+          <BannerCarousel />
+          <FeaturedProducts />
+          <main className="container mx-auto px-4 py-8">        
+            <ProductList
+              searchTerm={searchTerm}
+              selectedCategory={selectedCategory}
+            />
+          </main>
+          <CategoriesSection onCategorySelect={handleCategoryChange} />
+        </>
+      )}
       
-      <FeaturedProducts />
-      
-      <main className="container mx-auto px-4 py-8">        
-        <ProductList
-          searchTerm={searchTerm}
-          selectedCategory={selectedCategory}
-        />
-      </main>
-
-      <CategoriesSection onCategorySelect={handleCategoryChange} />
       <Footer />
       <ChatBot />
     </div>
