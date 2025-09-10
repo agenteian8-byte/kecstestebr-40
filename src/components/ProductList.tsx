@@ -205,9 +205,6 @@ const ProductList = ({ searchTerm, selectedCategory }: ProductListProps) => {
                   <div className="text-lg md:text-xl font-bold text-blue-600">
                     R$ {(profile?.setor === 'revenda' ? product.price_revenda : product.price_varejo)?.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) || '0,00'}
                   </div>
-                  <div className="text-xs text-gray-500 hidden md:block">
-                    ou 12x de R$ {((profile?.setor === 'revenda' ? product.price_revenda : product.price_varejo) || 0 / 12).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                  </div>
                   {profile?.setor === 'revenda' && (
                     <div className="text-xs text-green-600 font-medium">
                       Preço Revenda

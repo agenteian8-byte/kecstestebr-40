@@ -124,9 +124,6 @@ const ProductDetail = ({ product, isOpen, onClose }: ProductDetailProps) => {
                   <div className="text-3xl font-bold text-primary">
                     R$ {getPrice().toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </div>
-                  <div className="text-muted-foreground">
-                    ou 12x de R$ {Math.round(getPrice() / 12).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} sem juros
-                  </div>
                 </div>
 
                 {product.description && (
