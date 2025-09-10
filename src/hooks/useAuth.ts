@@ -53,6 +53,8 @@ export const useAuth = () => {
               setProfile(profileData as Profile);
               console.log('👤 Profile set:', !!profileData);
             }
+          } else {
+            setProfile(null);
           }
           
           setLoading(false);
@@ -68,6 +70,7 @@ export const useAuth = () => {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('🔑 Auth state change:', event, !!session);
         if (mounted) {
           setSession(session);
           setUser(session?.user ?? null);

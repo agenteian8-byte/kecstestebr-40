@@ -11,15 +11,14 @@ export const supabasePublic = createClient(
   SUPABASE_PUBLISHABLE_KEY,
   {
     auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-      detectSessionInUrl: false,
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
       flowType: 'pkce',
     },
     global: {
       headers: {
         apikey: SUPABASE_PUBLISHABLE_KEY,
-        // Important: do not override Authorization with user token; this client stays anon
       },
     },
   }
