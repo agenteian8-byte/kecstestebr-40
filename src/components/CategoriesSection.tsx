@@ -85,27 +85,14 @@ const CategoriesSection = ({ onCategorySelect }: CategoriesSectionProps) => {
     }
   };
 
-  const handleCategoryClick = (categorySlug: string, e?: React.MouseEvent) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    
-    console.log('🏷️ Category clicked:', categorySlug);
+  const handleCategoryClick = (categorySlug: string) => {
+    console.log('🔥 Category button clicked:', categorySlug);
+    console.log('🔥 onCategorySelect function exists:', !!onCategorySelect);
     
     if (onCategorySelect) {
+      console.log('🔥 Calling onCategorySelect...');
       onCategorySelect(categorySlug);
-      
-      // Simple scroll to products section
-      setTimeout(() => {
-        const productSection = document.querySelector('main');
-        if (productSection) {
-          productSection.scrollIntoView({ 
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
-      }, 100);
+      console.log('🔥 onCategorySelect called successfully');
     }
   };
 
@@ -152,18 +139,25 @@ const CategoriesSection = ({ onCategorySelect }: CategoriesSectionProps) => {
             return (
               <Card 
                 key={category.id} 
-                className="group cursor-pointer hover:shadow-card transition-all duration-300 hover:-translate-y-1 border-0 shadow-sm touch-manipulation"
-                onClick={(e) => handleCategoryClick(category.slug, e)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    handleCategoryClick(category.slug);
-                  }
-                }}
+                className="group cursor-pointer hover:shadow-card transition-all duration-300 hover:-translate-y-1 border-0 shadow-sm"
               >
-                <CardContent className="p-3 sm:p-6 text-center">
+                <CardContent 
+                  className="p-3 sm:p-6 text-center"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🔥 Card clicked, preventing default and calling handler');
+                    handleCategoryClick(category.slug);
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleCategoryClick(category.slug);
+                    }
+                  }}
+                >
                   <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full ${colorClass} flex items-center justify-center mx-auto mb-2 sm:mb-4 group-hover:scale-110 transition-transform duration-300`}>
                     <IconComponent className="h-6 w-6 sm:h-8 sm:w-8" />
                   </div>
