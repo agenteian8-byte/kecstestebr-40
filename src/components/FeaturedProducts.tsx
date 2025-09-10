@@ -184,11 +184,11 @@ const FeaturedProducts = () => {
             </div>
           )}
           
-          <div className="space-y-4">
+          <div className="space-y-4 md:space-y-6">
             {currentProducts.map((product) => (
               <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow group cursor-pointer">
-                <div className="flex">
-                  <div className="relative w-40 h-40 md:w-48 md:h-48 flex-shrink-0" onClick={() => handleProductClick(product)}>
+                <div className="flex flex-col sm:flex-row">
+                  <div className="relative w-full h-48 sm:w-48 sm:h-48 md:w-56 md:h-56 flex-shrink-0" onClick={() => handleProductClick(product)}>
                     <img 
                       src={product.image_url || 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop'} 
                       alt={product.name}
@@ -215,7 +215,7 @@ const FeaturedProducts = () => {
                     )}
                   </div>
 
-                  <CardContent className="flex-1 p-6 flex flex-col justify-between">
+                  <CardContent className="flex-1 p-4 md:p-6 flex flex-col justify-between">
                     <div>
                       <h3 className="font-semibold text-lg md:text-xl text-foreground mb-3 cursor-pointer hover:text-primary transition-colors" 
                           onClick={() => handleProductClick(product)}>
@@ -229,7 +229,7 @@ const FeaturedProducts = () => {
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                       <div>
                         <div className="text-2xl md:text-3xl font-bold text-primary">
                           R$ {getPrice(product).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
@@ -242,7 +242,7 @@ const FeaturedProducts = () => {
                       </div>
 
                       <Button 
-                        className="bg-gradient-primary hover:opacity-90 font-semibold px-8"
+                        className="bg-gradient-primary hover:opacity-90 font-semibold px-8 h-10 md:h-12 w-full sm:w-auto"
                         onClick={() => handleWhatsAppContact(product)}
                       >
                         <MessageCircle className="h-4 w-4 mr-2" />
