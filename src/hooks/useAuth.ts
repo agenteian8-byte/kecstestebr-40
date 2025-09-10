@@ -20,83 +20,50 @@ export const useAuth = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    let mounted = true;
-
-    const getSession = async () => {
+    const getInitialSession = async () => {
       try {
-        console.log('🔑 Getting session...');
-        const { data: { session }, error } = await supabase.auth.getSession();
+        const { data: { session } } = await supabase.auth.getSession();
+        setSession(session);
+        setUser(session?.user ?? null);
         
-        if (error) {
-          console.error('🔑 Session error:', error);
-        }
-        
-        if (mounted) {
-          setSession(session);
-          setUser(session?.user ?? null);
-          console.log('🔑 Session set:', !!session);
-          
-          if (session?.user) {
-            console.log('👤 Getting profile for user:', session.user.id);
-            // Get profile
-            const { data: profileData, error: profileError } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('user_id', session.user.id)
-              .maybeSingle();
-            
-            if (profileError) {
-              console.error('👤 Profile error:', profileError);
-            }
-            
-            if (mounted) {
-              setProfile(profileData as Profile);
-              console.log('👤 Profile set:', !!profileData);
-            }
-          } else {
-            setProfile(null);
-          }
-          
-          setLoading(false);
+        if (session?.user) {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .maybeSingle();
+          setProfile(profileData as Profile);
         }
       } catch (error) {
-        console.error('🔑 Auth error:', error);
-        if (mounted) {
-          setLoading(false);
-        }
+        console.error('Error getting session:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    // Listen for auth changes
+    getInitialSession();
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('🔑 Auth state change:', event, !!session);
-        if (mounted) {
-          setSession(session);
-          setUser(session?.user ?? null);
-          
-          if (session?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION')) {
-            const { data: profileData } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('user_id', session.user.id)
-              .maybeSingle();
-            setProfile(profileData as Profile);
-          } else if (event === 'SIGNED_OUT') {
-            setProfile(null);
-          }
-          
-          setLoading(false);
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .maybeSingle();
+          setProfile(profileData as Profile);
+        } else {
+          setProfile(null);
         }
+        
+        setLoading(false);
       }
     );
 
-    getSession();
-
-    return () => {
-      mounted = false;
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
   const signUp = async (email: string, password: string, setor: string = 'varejo', phone?: string) => {
