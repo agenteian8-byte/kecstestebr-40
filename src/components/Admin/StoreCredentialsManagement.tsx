@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Save, Phone, Instagram, Facebook, Twitter, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from '@/integrations/supabase/client';
+import { useStoreCredentials } from "@/hooks/useStoreCredentials";
 
 interface StoreCredentials {
   id?: string;
@@ -22,27 +22,18 @@ interface StoreCredentials {
 
 const StoreCredentialsManagement = () => {
   const [credentials, setCredentials] = useState<StoreCredentials>({});
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
+  const { 
+    credentials: hookCredentials, 
+    loading, 
+    saveCredentials, 
+    loadCredentials 
+  } = useStoreCredentials();
 
   useEffect(() => {
-    fetchCredentials();
-  }, []);
-
-  const fetchCredentials = async () => {
-    try {
-      // Load from localStorage for now
-      const saved = localStorage.getItem('store_credentials');
-      if (saved) {
-        setCredentials(JSON.parse(saved));
-      }
-    } catch (error) {
-      console.error('Erro:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setCredentials(hookCredentials);
+  }, [hookCredentials]);
 
 
   const handleInputChange = (field: string, value: string) => {
@@ -64,14 +55,21 @@ const StoreCredentialsManagement = () => {
         website: credentials.website || '',
       };
 
-      // For now, save to localStorage until database table is created
-      localStorage.setItem('store_credentials', JSON.stringify(dataToSave));
-      setCredentials({ ...credentials, ...dataToSave });
+      const result = await saveCredentials(dataToSave);
 
-      toast({
-        title: "Sucesso",
-        description: "Credenciais da loja salvas com sucesso!",
-      });
+      if (result.success) {
+        setCredentials(result.data);
+        toast({
+          title: "Sucesso",
+          description: "Credenciais da loja salvas com sucesso no banco de dados!",
+        });
+      } else {
+        toast({
+          title: "Aviso",
+          description: "Credenciais salvas localmente. Verifique a conexão com o banco de dados.",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       console.error('Erro ao salvar:', error);
       toast({
