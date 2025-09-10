@@ -139,11 +139,11 @@ const CategoriesSection = ({ onCategorySelect }: CategoriesSectionProps) => {
             return (
               <Card 
                 key={category.id} 
-                className="group cursor-pointer hover:shadow-card transition-all duration-300 hover:-translate-y-1 border-0 shadow-sm"
+                className="group cursor-pointer hover:shadow-card transition-all duration-300 hover:-translate-y-1 border-0 shadow-sm notranslate"
                 translate="no"
               >
                 <CardContent 
-                  className="p-3 sm:p-6 text-center"
+                  className="p-3 sm:p-6 text-center notranslate"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();

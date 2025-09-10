@@ -23,7 +23,7 @@ const FeaturedProducts = () => {
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [visibleProducts, setVisibleProducts] = useState(4);
   const { profile } = useAuth();
 
   useEffect(() => {
@@ -91,19 +91,11 @@ const FeaturedProducts = () => {
     return profile?.setor === 'revenda' ? product.price_revenda : product.price_varejo;
   };
 
-  const productsPerPage = 2;
-  const totalPages = Math.ceil(products.length / productsPerPage);
-  const currentProducts = products.slice(
-    currentPage * productsPerPage,
-    (currentPage + 1) * productsPerPage
-  );
+  const currentProducts = products.slice(0, visibleProducts);
+  const hasMoreProducts = visibleProducts < products.length;
 
-  const nextPage = () => {
-    setCurrentPage((prev) => (prev + 1) % totalPages);
-  };
-
-  const prevPage = () => {
-    setCurrentPage((prev) => (prev - 1 + totalPages) % totalPages);
+  const loadMoreProducts = () => {
+    setVisibleProducts(prev => Math.min(prev + 4, products.length));
   };
 
   if (loading) {
@@ -163,113 +155,86 @@ const FeaturedProducts = () => {
           </p>
         </div>
 
-        <div className="relative">
-          {/* Navigation buttons - only show if more than 2 products */}
-          {products.length > 2 && (
-            <div className="flex justify-center gap-4 mb-6">
-              <Button
-                variant="outline"
-                className="bg-white/80 hover:bg-white shadow-lg"
-                onClick={prevPage}
-              >
-                ← Anterior
-              </Button>
-              <Button
-                variant="outline"
-                className="bg-white/80 hover:bg-white shadow-lg"
-                onClick={nextPage}
-              >
-                Próximo →
-              </Button>
-            </div>
-          )}
-          
-          <div className="space-y-4 md:space-y-6">
-            {currentProducts.map((product) => (
-              <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow group cursor-pointer">
-                <div className="flex flex-col sm:flex-row">
-                  <div className="relative w-full h-48 sm:w-48 sm:h-48 md:w-56 md:h-56 flex-shrink-0" onClick={() => handleProductClick(product)}>
-                    <img 
-                      src={product.image_url || 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop'} 
-                      alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
-                      Em Destaque
-                    </Badge>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="absolute top-3 right-3 bg-white/80 hover:bg-white text-foreground opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleProductClick(product);
-                      }}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    {product.sku && (
-                      <Badge className="absolute bottom-3 right-3 bg-blue-500 text-white text-xs">
-                        {product.sku}
-                      </Badge>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {currentProducts.map((product) => (
+            <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow group cursor-pointer">
+              <div className="relative w-full h-48" onClick={() => handleProductClick(product)}>
+                <img 
+                  src={product.image_url || 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop'} 
+                  alt={product.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
+                  Em Destaque
+                </Badge>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="absolute top-3 right-3 bg-white/80 hover:bg-white text-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleProductClick(product);
+                  }}
+                >
+                  <Eye className="h-4 w-4" />
+                </Button>
+                {product.sku && (
+                  <Badge className="absolute bottom-3 right-3 bg-blue-500 text-white text-xs">
+                    {product.sku}
+                  </Badge>
+                )}
+              </div>
+
+              <CardContent className="p-4 flex flex-col justify-between h-40">
+                <div>
+                  <h3 className="font-semibold text-base text-foreground mb-2 cursor-pointer hover:text-primary transition-colors line-clamp-2" 
+                      onClick={() => handleProductClick(product)}>
+                    {product.name}
+                  </h3>
+                  
+                  {product.description && (
+                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                      {product.description}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <div>
+                    <div className="text-xl font-bold text-primary">
+                      R$ {getPrice(product).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    </div>
+                    {profile?.setor === 'revenda' && (
+                      <div className="text-xs text-green-600 font-medium">
+                        Preço Revenda
+                      </div>
                     )}
                   </div>
 
-                  <CardContent className="flex-1 p-4 md:p-6 flex flex-col justify-between">
-                    <div>
-                      <h3 className="font-semibold text-lg md:text-xl text-foreground mb-3 cursor-pointer hover:text-primary transition-colors" 
-                          onClick={() => handleProductClick(product)}>
-                        {product.name}
-                      </h3>
-                      
-                      {product.description && (
-                        <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
-                          {product.description}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                      <div>
-                        <div className="text-2xl md:text-3xl font-bold text-primary">
-                          R$ {getPrice(product).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                        </div>
-                        {profile?.setor === 'revenda' && (
-                          <div className="text-sm text-green-600 font-medium">
-                            Preço Revenda
-                          </div>
-                        )}
-                      </div>
-
-                      <Button 
-                        className="bg-gradient-primary hover:opacity-90 font-semibold px-8 h-10 md:h-12 w-full sm:w-auto"
-                        onClick={() => handleWhatsAppContact(product)}
-                      >
-                        <MessageCircle className="h-4 w-4 mr-2" />
-                        Consultar
-                      </Button>
-                    </div>
-                  </CardContent>
+                  <Button 
+                    className="bg-gradient-primary hover:opacity-90 font-semibold w-full h-9 text-sm"
+                    onClick={() => handleWhatsAppContact(product)}
+                  >
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    Consultar
+                  </Button>
                 </div>
-              </Card>
-            ))}
-          </div>
-
-          {/* Pagination dots - only show if more than 2 products */}
-          {products.length > 2 && (
-            <div className="flex justify-center mt-8 gap-2">
-              {Array.from({ length: totalPages }).map((_, index) => (
-                <button
-                  key={index}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    index === currentPage ? 'bg-primary w-6' : 'bg-muted-foreground/30'
-                  }`}
-                  onClick={() => setCurrentPage(index)}
-                />
-              ))}
-            </div>
-          )}
+              </CardContent>
+            </Card>
+          ))}
         </div>
+
+        {/* Botão Ver Todos - só mostra se há mais produtos */}
+        {hasMoreProducts && (
+          <div className="flex justify-center mt-8">
+            <Button 
+              onClick={loadMoreProducts}
+              className="bg-gradient-primary hover:opacity-90 font-semibold px-8 h-12"
+            >
+              Ver Todos os Produtos em Destaque
+            </Button>
+          </div>
+        )}
       </div>
 
       <ProductDetail 
