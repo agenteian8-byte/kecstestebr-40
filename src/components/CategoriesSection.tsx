@@ -189,7 +189,6 @@ const CategoriesSection = ({ onCategorySelect }: CategoriesSectionProps) => {
                 key={category.id} 
                 className="group cursor-pointer hover:shadow-card transition-all duration-300 hover:-translate-y-1 border-0 shadow-sm touch-manipulation"
                 onClick={(e) => handleCategoryClick(category.slug, e)}
-                onTouchEnd={(e) => handleCategoryClick(category.slug, e)}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
