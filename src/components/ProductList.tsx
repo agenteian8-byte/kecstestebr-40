@@ -142,6 +142,9 @@ const ProductList = ({ searchTerm, selectedCategory }: ProductListProps) => {
 
   console.log('Rendering products:', products.length);
 
+  // Check if it's a search/filter context
+  const isSearchContext = searchTerm?.trim() !== '' || selectedCategory !== 'all';
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -162,7 +165,76 @@ const ProductList = ({ searchTerm, selectedCategory }: ProductListProps) => {
           <h3 className="text-lg font-semibold mb-2">Nenhum produto encontrado</h3>
           <p className="text-gray-600">Verifique sua conexão ou tente novamente.</p>
         </div>
+      ) : isSearchContext ? (
+        // Horizontal layout for search results
+        <div className="space-y-4">
+          {products.map((product) => (
+            <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow group cursor-pointer">
+              <div className="flex">
+                <div className="relative w-32 h-32 md:w-40 md:h-40 flex-shrink-0" onClick={() => handleProductClick(product)}>
+                  <img 
+                    src={product.image_url || 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop'} 
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  {product.sku && (
+                    <Badge className="absolute top-2 right-2 bg-blue-500 text-white text-xs">
+                      {product.sku}
+                    </Badge>
+                  )}
+                  <Button
+                    size="icon"
+                    className="absolute top-2 left-2 bg-white/80 hover:bg-white text-primary opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleProductClick(product);
+                    }}
+                  >
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                <CardContent className="flex-1 p-4 flex flex-col justify-between">
+                  <div>
+                    <h3 className="font-semibold mb-2 text-base md:text-lg cursor-pointer hover:text-primary" 
+                        onClick={() => handleProductClick(product)}>
+                      {product.name}
+                    </h3>
+                    
+                    {product.description && (
+                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                        {product.description}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-xl md:text-2xl font-bold text-blue-600">
+                        R$ {(profile?.setor === 'revenda' ? product.price_revenda : product.price_varejo)?.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) || '0,00'}
+                      </div>
+                      {profile?.setor === 'revenda' && (
+                        <div className="text-xs text-green-600 font-medium">
+                          Preço Revenda
+                        </div>
+                      )}
+                    </div>
+
+                    <Button 
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-6"
+                      onClick={handleWhatsAppContact}
+                    >
+                      <ShoppingCart className="h-4 w-4 mr-2" />
+                      Consultar
+                    </Button>
+                  </div>
+                </CardContent>
+              </div>
+            </Card>
+          ))}
+        </div>
       ) : (
+        // Grid layout for regular display
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
           {products.map((product) => (
             <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow group cursor-pointer">
