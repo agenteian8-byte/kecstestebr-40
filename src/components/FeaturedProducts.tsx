@@ -91,7 +91,7 @@ const FeaturedProducts = () => {
     return profile?.setor === 'revenda' ? product.price_revenda : product.price_varejo;
   };
 
-  const productsPerPage = 4;
+  const productsPerPage = 2;
   const totalPages = Math.ceil(products.length / productsPerPage);
   const currentProducts = products.slice(
     currentPage * productsPerPage,
@@ -164,98 +164,99 @@ const FeaturedProducts = () => {
         </div>
 
         <div className="relative">
-          {/* Navigation buttons - only show if more than 4 products */}
-          {products.length > 4 && (
-            <>
+          {/* Navigation buttons - only show if more than 2 products */}
+          {products.length > 2 && (
+            <div className="flex justify-center gap-4 mb-6">
               <Button
-                size="icon"
                 variant="outline"
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white shadow-lg"
+                className="bg-white/80 hover:bg-white shadow-lg"
                 onClick={prevPage}
               >
-                <ChevronLeft className="h-4 w-4" />
+                ← Anterior
               </Button>
               <Button
-                size="icon"
                 variant="outline"
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white shadow-lg"
+                className="bg-white/80 hover:bg-white shadow-lg"
                 onClick={nextPage}
               >
-                <ChevronRight className="h-4 w-4" />
+                Próximo →
               </Button>
-            </>
+            </div>
           )}
           
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 px-8 sm:px-12 md:px-0">
+          <div className="space-y-4">
             {currentProducts.map((product) => (
-            <Card 
-              key={product.id} 
-              className="group cursor-pointer hover:shadow-card transition-all duration-300 hover:-translate-y-1 border-0 shadow-sm overflow-hidden"
-            >
-              <div className="relative">
-                <img 
-                  src={product.image_url || 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop'} 
-                  alt={product.name}
-                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
-                  Em Destaque
-                </Badge>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="absolute top-3 right-3 bg-white/80 hover:bg-white text-foreground"
-                  onClick={() => handleProductClick(product)}
-                >
-                  <Eye className="h-4 w-4" />
-                </Button>
-                {product.sku && (
-                  <Badge className="absolute bottom-3 right-3 bg-blue-500 text-white text-xs">
-                    {product.sku}
-                  </Badge>
-                )}
-              </div>
-
-              <CardContent className="p-4">
-                <h3 className="font-semibold text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors cursor-pointer"
-                    onClick={() => handleProductClick(product)}>
-                  {product.name}
-                </h3>
-                
-                {product.description && (
-                  <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                    {product.description}
-                  </p>
-                )}
-
-                <div className="mb-4">
-                  <div className="text-2xl font-bold text-primary">
-                    R$ {getPrice(product).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow group cursor-pointer">
+                <div className="flex">
+                  <div className="relative w-40 h-40 md:w-48 md:h-48 flex-shrink-0" onClick={() => handleProductClick(product)}>
+                    <img 
+                      src={product.image_url || 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop'} 
+                      alt={product.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
+                      Em Destaque
+                    </Badge>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="absolute top-3 right-3 bg-white/80 hover:bg-white text-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleProductClick(product);
+                      }}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    {product.sku && (
+                      <Badge className="absolute bottom-3 right-3 bg-blue-500 text-white text-xs">
+                        {product.sku}
+                      </Badge>
+                    )}
                   </div>
-                  <span className="text-sm text-muted-foreground">
-                    ou 12x de R$ {(getPrice(product) / 12).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                  </span>
-                  {profile?.setor === 'revenda' && (
-                    <div className="text-xs text-green-600 font-medium mt-1">
-                      Preço Revenda
-                    </div>
-                  )}
-                </div>
 
-                <Button 
-                  className="w-full bg-gradient-primary hover:opacity-90 font-semibold"
-                  onClick={() => handleWhatsAppContact(product)}
-                >
-                  <MessageCircle className="h-4 w-4 mr-2" />
-                  Consultar
-                </Button>
-              </CardContent>
-            </Card>
+                  <CardContent className="flex-1 p-6 flex flex-col justify-between">
+                    <div>
+                      <h3 className="font-semibold text-lg md:text-xl text-foreground mb-3 cursor-pointer hover:text-primary transition-colors" 
+                          onClick={() => handleProductClick(product)}>
+                        {product.name}
+                      </h3>
+                      
+                      {product.description && (
+                        <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
+                          {product.description}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-2xl md:text-3xl font-bold text-primary">
+                          R$ {getPrice(product).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        </div>
+                        {profile?.setor === 'revenda' && (
+                          <div className="text-sm text-green-600 font-medium">
+                            Preço Revenda
+                          </div>
+                        )}
+                      </div>
+
+                      <Button 
+                        className="bg-gradient-primary hover:opacity-90 font-semibold px-8"
+                        onClick={() => handleWhatsAppContact(product)}
+                      >
+                        <MessageCircle className="h-4 w-4 mr-2" />
+                        Consultar
+                      </Button>
+                    </div>
+                  </CardContent>
+                </div>
+              </Card>
             ))}
           </div>
 
-          {/* Pagination dots - only show if more than 4 products */}
-          {products.length > 4 && (
+          {/* Pagination dots - only show if more than 2 products */}
+          {products.length > 2 && (
             <div className="flex justify-center mt-8 gap-2">
               {Array.from({ length: totalPages }).map((_, index) => (
                 <button
