@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -25,6 +25,59 @@ interface ProductDetailProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+interface DescriptionWithReadMoreProps {
+  text: string;
+  maxLines: number;
+  className?: string;
+}
+
+const DescriptionWithReadMore = ({ text, maxLines, className = '' }: DescriptionWithReadMoreProps) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [showButton, setShowButton] = useState(false);
+
+  useEffect(() => {
+    const lineHeight = 1.5;
+    const element = document.createElement('div');
+    element.style.cssText = `
+      position: absolute;
+      visibility: hidden;
+      line-height: ${lineHeight}em;
+      max-width: 100%;
+    `;
+    element.className = className;
+    element.innerText = text;
+    document.body.appendChild(element);
+    const actualLines = element.scrollHeight / (parseFloat(getComputedStyle(element).lineHeight));
+    document.body.removeChild(element);
+    
+    setShowButton(actualLines > maxLines);
+  }, [text, maxLines, className]);
+
+  return (
+    <div>
+      <p 
+        className={`${className} ${!isExpanded ? `line-clamp-${maxLines}` : ''}`}
+        style={!isExpanded ? { 
+          display: '-webkit-box',
+          WebkitLineClamp: maxLines,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden'
+        } : {}}
+      >
+        {text}
+      </p>
+      {showButton && (
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="text-primary text-sm font-medium mt-1 hover:underline"
+        >
+          {isExpanded ? 'Ver menos' : 'Ver mais'}
+        </button>
+      )}
+    </div>
+  );
+};
 
 const ProductDetail = ({ product, isOpen, onClose }: ProductDetailProps) => {
   const [imageZoom, setImageZoom] = useState(false);
@@ -129,9 +182,11 @@ const ProductDetail = ({ product, isOpen, onClose }: ProductDetailProps) => {
                 {product.description && (
                   <div className="space-y-2">
                     <h3 className="font-semibold text-foreground">Descrição</h3>
-                    <p className="text-muted-foreground leading-relaxed">
-                      {product.description}
-                    </p>
+                    <DescriptionWithReadMore 
+                      text={product.description}
+                      maxLines={5}
+                      className="text-muted-foreground leading-relaxed"
+                    />
                   </div>
                 )}
 

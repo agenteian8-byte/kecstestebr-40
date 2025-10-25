@@ -18,6 +18,61 @@ interface Product {
   is_featured?: boolean;
 }
 
+interface DescriptionWithReadMoreProps {
+  text: string;
+  maxLines: number;
+  className?: string;
+}
+
+const DescriptionWithReadMore = ({ text, maxLines, className = '' }: DescriptionWithReadMoreProps) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [showButton, setShowButton] = useState(false);
+
+  useEffect(() => {
+    // Check if text needs truncation
+    const lineHeight = 1.5;
+    const maxHeight = maxLines * lineHeight;
+    const element = document.createElement('div');
+    element.style.cssText = `
+      position: absolute;
+      visibility: hidden;
+      line-height: ${lineHeight}em;
+      max-width: 100%;
+    `;
+    element.className = className;
+    element.innerText = text;
+    document.body.appendChild(element);
+    const actualLines = element.scrollHeight / (parseFloat(getComputedStyle(element).lineHeight));
+    document.body.removeChild(element);
+    
+    setShowButton(actualLines > maxLines);
+  }, [text, maxLines, className]);
+
+  return (
+    <div>
+      <p 
+        className={`${className} ${!isExpanded ? `line-clamp-${maxLines}` : ''}`}
+        style={!isExpanded ? { 
+          display: '-webkit-box',
+          WebkitLineClamp: maxLines,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden'
+        } : {}}
+      >
+        {text}
+      </p>
+      {showButton && (
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="text-primary text-sm font-medium mt-1 hover:underline"
+        >
+          {isExpanded ? 'Ver menos' : 'Ver mais'}
+        </button>
+      )}
+    </div>
+  );
+};
+
 const FeaturedProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -193,9 +248,11 @@ const FeaturedProducts = () => {
                   </h3>
                   
                   {product.description && (
-                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                      {product.description}
-                    </p>
+                    <DescriptionWithReadMore 
+                      text={product.description}
+                      maxLines={5}
+                      className="text-sm text-muted-foreground mb-3"
+                    />
                   )}
                 </div>
 

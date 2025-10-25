@@ -121,7 +121,7 @@ const ProductManagement = () => {
     setLoading(true);
 
     try {
-      const productData = {
+      const productData: any = {
         name: formData.name,
         description: formData.description || null,
         price_varejo: parseFloat(formData.price_varejo),
@@ -195,7 +195,7 @@ const ProductManagement = () => {
     try {
       const { error } = await supabase
         .from('products')
-        .update({ is_active: !currentStatus })
+        .update({ is_active: !currentStatus } as any)
         .eq('id', id);
 
       if (error) throw error;
